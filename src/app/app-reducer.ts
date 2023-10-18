@@ -8,7 +8,7 @@ const slice = createSlice({
     initialState: {
         status: 'idle' as RequestStatusType,
         error: null as string | null,
-        isInitialized: false
+        isInitialized: true
     },
     reducers: {
         setAppError: (state, action: PayloadAction<{error: string | null}>) =>{
@@ -33,7 +33,7 @@ export const setAppInitializedAC = (value: boolean) => ({type: 'APP/SET-IS-INITI
 export const initializeAppTC = () => (dispatch: Dispatch) => {
     authAPI.me().then(res => {
         if (res.data.resultCode === 0) {
-            dispatch(authActions.setIsLoggedIn({value: true}));
+            dispatch(authActions.setIsLoggedIn({isLoggedIn: true}));
         } else {
 
         }
