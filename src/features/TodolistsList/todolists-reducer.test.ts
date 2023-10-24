@@ -1,8 +1,8 @@
 import {
-    addTodolistAC, changeTodolistEntityStatusAC,
-    changeTodolistFilterAC,
-    changeTodolistTitleAC, FilterValuesType,
-    removeTodolistAC, setTodolistsAC, TodolistDomainType, todolistsActions,
+    FilterValuesType,
+    setTodolistsAC,
+    TodolistDomainType,
+    todolistsActions,
     todolistsReducer
 } from './todolists-reducer'
 import {v1} from 'uuid'

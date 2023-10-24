@@ -49,7 +49,10 @@ const slice = createSlice({
             }
         },
         setTodolists: (state, action: PayloadAction<{ todolists: TodolistType[] }>) => {
-            return action.payload.todolists.map(tl => ({...tl, filter: 'all', entityStatus: 'idle'}))
+            //1 v
+            //return action.payload.todolists.map(tl => ({...tl, filter: 'all', entityStatus: 'idle'}))
+            //2 v
+            action.payload.todolists.forEach(tl => state.push({...tl, filter: 'all', entityStatus: 'idle'}))
         }
 
 
@@ -139,7 +142,7 @@ export const changeTodolistTitleTC = (id: string, title: string): AppThunk => {
 }
 
 // types
-export type FilterValuesType = 'all' | 'complete'| any
+export type FilterValuesType = 'all' | 'complete' | any
 export type TodolistDomainType = TodolistType & {
     filter: FilterValuesType
     entityStatus: RequestStatusType
