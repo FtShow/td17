@@ -2,13 +2,12 @@ import React, { useCallback, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { AppRootStateType } from 'app/store'
 import {
-	addTodolistTC,
-	changeTodolistFilterAC,
-	changeTodolistTitleTC,
-	fetchTodolistsTC,
-	FilterValuesType,
-	removeTodolistTC,
-	TodolistDomainType
+    addTodolistTC,
+    changeTodolistFilterAC,
+    changeTodolistTitleTC, fetchTodolistsTC,
+    FilterValuesType,
+    removeTodolistTC,
+    TodolistDomainType
 } from './todolists-reducer'
 import { addTaskTC, removeTaskTC, TasksStateType, updateTaskTC } from './tasks-reducer'
 import { TaskStatuses } from 'api/todolists-api'

@@ -1,15 +1,10 @@
 import {todolistsAPI, TodolistType} from 'api/todolists-api'
-import {Dispatch} from 'redux'
-import {
-    appActions,
-    RequestStatusType,
-    SetAppErrorActionType,
-    setAppStatusAC,
-    SetAppStatusActionType
-} from 'app/app-reducer'
-import {handleServerNetworkError} from 'utils/error-utils'
+import {appActions, RequestStatusType} from 'app/app-reducer'
 import {AppThunk} from 'app/store';
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
+import {fetchTasksTC} from "features/TodolistsList/tasks-reducer";
+import {handleServerNetworkError} from "utils/error-utils";
+import {authActions} from "features/Login/auth-reducer";
 
 const initialState: Array<TodolistDomainType> = []
 
@@ -56,7 +51,15 @@ const slice = createSlice({
         }
 
 
+    },
+    extraReducers: (builder) => {
+        builder.addCase(authActions.setIsLoggedIn, (state, action)=>{
+            if(!action.payload.isLoggedIn){
+                return []
+            }
+        })
     }
+
 })
 
 // export const _todolistsReducer = (state: Array<TodolistDomainType> = initialState, action: any): Array<TodolistDomainType> => {
@@ -97,20 +100,6 @@ export const changeTodolistEntityStatusAC = (id: string, status: RequestStatusTy
 } as const)
 export const setTodolistsAC = (todolists: Array<TodolistType>) => ({type: 'SET-TODOLISTS', todolists} as const)
 
-// thunks
-export const fetchTodolistsTC = (): AppThunk => {
-    return (dispatch) => {
-        dispatch(appActions.setAppStatus({status: 'loading'}))
-        todolistsAPI.getTodolists()
-            .then((res) => {
-                dispatch(todolistsActions.setTodolists({todolists: res.data}))
-                dispatch(appActions.setAppStatus({status: 'succeeded'}))
-            })
-            .catch(error => {
-                handleServerNetworkError(error, dispatch);
-            })
-    }
-}
 export const removeTodolistTC = (id: string): AppThunk => {
     return (dispatch) => {
         dispatch(appActions.setAppStatus({status: 'loading'}))
@@ -140,7 +129,23 @@ export const changeTodolistTitleTC = (id: string, title: string): AppThunk => {
             })
     }
 }
-
+export const fetchTodolistsTC = (): AppThunk => {
+    return (dispatch) => {
+        dispatch(appActions.setAppStatus({status: 'loading'}))
+        todolistsAPI.getTodolists()
+            .then((res) => {
+                dispatch(todolistsActions.setTodolists({todolists: res.data}))
+                dispatch(appActions.setAppStatus({status: 'succeeded'}))
+                return res.data
+            })
+            .then((todos)=>{
+                todos.forEach(tl=> dispatch(fetchTasksTC(tl.id)))
+            })
+            .catch(error => {
+                handleServerNetworkError(error, dispatch);
+            })
+    }
+}
 // types
 export type FilterValuesType = 'all' | 'complete' | any
 export type TodolistDomainType = TodolistType & {

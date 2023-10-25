@@ -4,6 +4,7 @@ import {handleServerAppError, handleServerNetworkError} from 'utils/error-utils'
 import {TaskPriorities, TaskStatuses, TaskType, todolistsAPI, UpdateTaskModelType} from "api/todolists-api";
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {todolistsActions} from "features/TodolistsList/todolists-reducer";
+import {authActions} from "features/Login/auth-reducer";
 
 const initialState: TasksStateType = {}
 
@@ -28,12 +29,12 @@ const slice = createSlice({
             todolistId: string
         }>) => {
             const taskForTodolist = state[action.payload.todolistId]
-            const index = taskForTodolist.findIndex(task=>task.id === action.payload.taskId)
+            const index = taskForTodolist.findIndex(task => task.id === action.payload.taskId)
             if (index !== -1) {
                 taskForTodolist[index] = {...taskForTodolist[index], ...action.payload.domainModel}
             }
         },
-        setTasks: (state, action: PayloadAction<{tasks: Array<TaskType>, todolistId: string}>)=>{
+        setTasks: (state, action: PayloadAction<{ tasks: Array<TaskType>, todolistId: string }>) => {
             state[action.payload.todolistId] = action.payload.tasks
         },
 
