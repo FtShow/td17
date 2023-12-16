@@ -1,11 +1,33 @@
-import { AddTodolistActionType, RemoveTodolistActionType, SetTodolistsActionType } from './todolists-reducer'
 import { TaskPriorities, TaskStatuses, TaskType, todolistsAPI, UpdateTaskModelType } from 'api/todolists-api'
 import { Dispatch } from 'redux'
 import { AppRootStateType, AppThunk } from 'app/store'
 import { handleServerAppError, handleServerNetworkError } from 'utils/error-utils'
 import { appActions } from 'app/app-reducer'
+import { createSlice } from '@reduxjs/toolkit'
+import { todolistActions } from 'features/TodolistsList/todolists-reducer'
 
 const initialState: TasksStateType = {}
+
+const slice = createSlice({
+   name: 'tasksReducer',
+   initialState: {} as TasksStateType,
+   reducers: {},
+   extraReducers: (builder) => {
+      builder
+         .addCase(todolistActions.addTodolist, (state, action) => {
+            // { ...state, [action.todolist.id]: []
+            state[action.payload.todolist.id] = []
+         })
+         .addCase(todolistActions.removeTodolist, (state, action) => {
+            delete state[action.payload.id]
+         })
+         .addCase(todolistActions.setTodolist, (state, action) => {
+            action.payload.todolists.forEach((tl: any) => {
+               state[tl.id] = []
+            })
+         })
+   },
+})
 
 export const tasksReducer = (state: TasksStateType = initialState, action: ActionsType): TasksStateType => {
    switch (action.type) {
@@ -20,15 +42,15 @@ export const tasksReducer = (state: TasksStateType = initialState, action: Actio
                t.id === action.taskId ? { ...t, ...action.model } : t,
             ),
          }
-      case 'ADD-TODOLIST':
-         return { ...state, [action.todolist.id]: [] }
+      // case 'ADD-TODOLIST':
+      //    return { ...state, [action.todolist.id]: [] }
       case 'REMOVE-TODOLIST':
          const copyState = { ...state }
          delete copyState[action.id]
          return copyState
       case 'SET-TODOLISTS': {
          const copyState = { ...state }
-         action.todolists.forEach((tl) => {
+         action.todolists.forEach((tl: any) => {
             copyState[tl.id] = []
          })
          return copyState
@@ -136,8 +158,9 @@ type ActionsType =
    | ReturnType<typeof removeTaskAC>
    | ReturnType<typeof addTaskAC>
    | ReturnType<typeof updateTaskAC>
-   | AddTodolistActionType
-   | RemoveTodolistActionType
-   | SetTodolistsActionType
    | ReturnType<typeof setTasksAC>
+   | any
 type ThunkDispatch = Dispatch<any>
+
+export const tasksReducers = slice.reducer
+export const tasksActions = slice.actions
